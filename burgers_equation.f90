@@ -225,4 +225,51 @@ subroutine calculation ()
 		if (what_method .EQ. 6) call high_resolution ()
 		if (what_method .EQ. 7) call parabolic ()
 	enddo
-end subroutine calculation	!this is on page 48 of the paper
+end subroutine calculation
+
+subroutine finite_difference ()
+	use globals
+	implicit none
+	do i=2,n
+		u(i)=u_old(i)-courant_number*u_old(i)*(u_old(i)-u_old(i-1))
+	enddo
+end subroutine finite_difference
+
+subroutine upwind ()
+	use globals
+	implicit none
+	do i=2,n
+		u(i)=u_old(i)-courant_number*(0.5*(u_old(i)**2)-0.5*(u_old(i-1)**2))
+	enddo
+end subroutine upwind
+
+subroutine lax_friedrich
+	use globals
+	implicit none
+	do i=2,n-1
+		u(i)=0.5*(u_old(i-1)+u_old(i+1)-o.5*courant)number*(f(u_old(i+1))-f(u_old(i-1)))
+	enddo
+end subroutine lax_friedrich
+
+subroutine godunov
+	use globals
+	implicit none
+	
+	!calculating numerical flux
+	do i=1,n-1
+		if (f_der(u_old(i)) .GE. 0 .AND. f_der(u_old(i+1)) .GE. 0) u_star=u_old(i)
+		if (f_der(u_old(i)) .LE. 0 .AND. f_der(u_old(i+1)) .LE. 0) u_star=u_old(i+1)
+		if (f_der(u_old(i)) .GE. 0 .AND. f_der(u_old(i+1)) .LE. 0 .AND. &
+			& (f(u_old(i+1)-f(u_old(i)))/(u_old(i+1)-u_old(i) .GT. 0) u_star=u_old(i)
+		if (f_der(u_old(i)) .GE. 0 .AND. f_der(u_old(i+1)) .LE. 0 .AND. &
+			& (f(u_old(i+1)-f(u_old(i)))/(u_old(i+1)-u_old(i) .LT. 0) u_star=u_old(i+1)	
+		if (f_der(u_old(i)) .LT. 0 .AND. f_der(u_old(i+1)) .GT. 0) u_star=0
+		numerical_fluxI)=f(u_star)
+	enddo
+	
+	do i=2,n-1
+		u(i)=u_old(i)-courant_number*(numerical_flux(i)-numerical_flux(i-1))
+	enddo
+end subroutine godunov
+!This is page 49 of the article, remaining subroutines:
+!parabolic, lax_wendroff, high_resolution
