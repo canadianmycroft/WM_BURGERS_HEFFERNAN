@@ -142,4 +142,87 @@ elseif (initial_data .EQ. 's') then
 	do i=quarter+1,n
 		u(i)=u_r
 	enddo
-elseif (initial_data .EQ. 'r') then !this is page 47 of the document
+elseif (initial_data .EQ. 'r') then
+	l_per=.false.
+	quarter=n/4
+	u_l=1.2
+	u_r=0.4
+	do i=1,quarter
+		u(i)=u_l
+	enddo
+elseif (initial_data .EQ. 'f') then
+	l_per=.false.
+	quarter=n/4
+	half=n/2
+		do i=1,quarter
+		u(i)=0.25
+	enddo
+	do i-quarter+1,half+1
+		u(i)=0.25 - (x(i)-x(quarter+1))*0.25/(x(half+1)-x(quarter+1))
+	enddo
+	do i=half+2,n
+		u(i)=0
+	enddo
+elseif (initial_data .EQ. 'c') then
+	l_per=.true.
+	quarter=n/4
+	half=n/2
+	do i=1,quarter
+		u(i)=0
+	enddo
+	do i=quarter+1,half+1
+		u(i)=1
+	enddo
+	do i=half2,n
+		u(i)=0
+	enddo
+else
+	write(*,*) 'bad value for initial_data'
+	stop
+endif
+end subroutine init_data
+
+subroutine put_out ()
+	use globals
+	implicit none
+	
+	open(unit=output,file='output.xls',form='formatted',position='rewind',status='unknown')
+	do i=1,n
+		write(output,*) u(i)
+	enddo
+end subroutine put_out
+
+subroutine calculation ()
+	use globals
+	implicit none
+	do time-0,t_max,delta_t
+		if (first_time .EQ. .false.) then
+			if (l_per) then
+				u(1:margin)=u(n-margin-margin+1:n-margin)
+				u(n-margin+1:n)=u(margin+1:margin+margin)
+			else
+				if (what_method .NE. 6) then
+					u(1)=u(2)
+					u(n)=u(n-1)
+				endif
+				if (what_method .EQ. 6) then
+					u(1)=u(3)
+					u(2)=u(3)
+					u(n)=u(n-2)
+					u(n-1)=u(n-2)
+				endif
+			endif
+		endif
+		fist_time=.false.
+		
+		u_old=u
+		
+		if (what_method .EQ. 1) call finite_difference ()
+		if (what_method .EQ. 2) call upwind ()
+		if (what_method .EQ. 3) call lax_friedrich ()
+		if (what_method .EQ. 4) call godunov ()
+		if (what_method .EQ. 5) call lax_wendroff ()
+		if (what_method .EQ. 6) call high_resolution ()
+		if (what_method .EQ. 7) call parabolic ()
+	enddo
+end subroutine calculation	!this is on page 48 of the paper
