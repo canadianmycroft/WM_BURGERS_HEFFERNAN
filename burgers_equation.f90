@@ -271,5 +271,17 @@ subroutine godunov
 		u(i)=u_old(i)-courant_number*(numerical_flux(i)-numerical_flux(i-1))
 	enddo
 end subroutine godunov
+
+subroutine parabolic
+	use globals
+	implicit none
+	do i=2,n-1
+		f_minus=0.5*(f(u_old(i))+f(u_old(i-1)))
+		f_plus=0.5*(f(u_old(i))+f(u_old(i+1)))
+		u(i)=u_old(i)+courant_number*(D*(u_old(i+1)-2*u_old(i)+u_old(i-1))/delta_x - &
+			& (f_plus-f_minus)
+!			& (f(u_old(i)-f(u_old(i-1))))
+	enddo
+end subroutine parabolic
 !This is page 49 of the article, remaining subroutines:
-!parabolic, lax_wendroff, high_resolution
+!lax_wendroff, high_resolution
