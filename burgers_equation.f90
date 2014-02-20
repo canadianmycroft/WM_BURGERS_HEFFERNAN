@@ -283,5 +283,38 @@ subroutine parabolic
 !			& (f(u_old(i)-f(u_old(i-1))))
 	enddo
 end subroutine parabolic
-!This is page 49 of the article, remaining subroutines:
-!lax_wendroff, high_resolution
+
+subroutine lax_wendroff ()
+	use globals
+	implicit none
+	do i=2,n-1
+		u(i)=u_old(i)-0.5*courant_number*(f(u_old(i+1))-f(u_old(i-1)))+0.5*courant_number**2* &
+			& (f_der(0.5*(u_old(i)+u_old(i+1)))*(f(u_old(i+1))-f(u_old(i))) - &
+			& f_der(0.5*(u_old(i)+u_old(i-1)))*(f(u_old(i))-f(u_old(i-1))))
+	enddo
+end subroutine lax_wendroff
+
+subroutine high_resolution ()
+	use globals
+	implicit none
+	
+	!calculation numerical flux
+	do i=2,n-1
+		u1=u_old(i+1)-u_old(i)
+		u2=u_old(i)-u(old(i-1)
+		if ( abs(u1) .LT. abs(u2) .AND. (u1*u2) .GT. 0) minmod=u1
+		if ( abs(u2) .LT. abs(u1) .AND. (u1*u2) .GT. 0) minmod=u2
+		if ( (u1*u2) .LE. 0) minmod=0
+		sigma=1/delta_x*minmod
+		if ( abs(u_old(i+1)-u_old(i)) .GT. 0.001) then
+			a_roof=(f(u_old(i+1))-f(u_old(i)))/(u_old(i+1)-u_old(i))
+		else
+			a_roof=0
+		endif
+		numerical_flux(i)=f(u_old(i)) + 0.5*a_roof*(1-courant_numer*a_roof)*delta_x*sigma
+	enddo
+	
+	do i=3,n-2
+		u(i)= u_old(i) -courant_number*(numerical_flux(i)-numerical_flux(i-1))
+	enddo
+end subroutine high_resolution
