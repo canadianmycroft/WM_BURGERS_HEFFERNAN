@@ -74,7 +74,7 @@ subroutine init ()
 	use globals
 	implicit none
 	
-	open(unit=input,file='input.a')
+	open(unit=input,file='input.a') !This does not seem to exist
 	read(input,*) a
 	read(input,*) b
 	read(input,*) n
