@@ -51,7 +51,7 @@ program burgers_equation
 		read(*,*) what_method
 		if (what_method .NE. 1 .AND. what_method .NE. 2 .AND. what_method .NE. 3 .AND. &
 			& what_method .NE. 4 .AND. what_method .NE. 5 .AND. what_method .NE. 6) then
-			write(*.*) 'bad value for what_method')
+			write(*,*) 'bad value for what_method'
 			stop
 		endif
 	else
@@ -96,7 +96,7 @@ subroutine init ()
 		x(i)=(i-1)*(b-a)*n_intv_i
 	enddo
 	do i=1,n_intv
-		h(i)-x(i+1)-x(i)
+		h(i)=x(i+1)-x(i)
 	enddo
 	
 	delta_x=(b-a)*n_intv_i
@@ -116,70 +116,70 @@ subroutine init_data ()
 	read(*,*) initial_data
 	
 	if (initial_data .EQ. 'h') then
-	l_per=.true.
-	quarter=n/4
-	half=n/2
-	do i=1,quarter
-		u(i)=0
-	enddo
-	do i=n-quarter_1,n
-		u(i)=0
-	enddo
-	do i=quarter+1,half+1
-		u(i)=(x(i)-x(quarter+1))/(x(half+1)-x(quarter+1))
-	enddo
-	do ihalf+1,n-quarter
-		u(i)=1-(x(i)-x(half+1))/(x(n-quarter)-x(half+1))
-	enddo
-elseif (initial_data .EQ. 's') then
-	l_per=.false.
-	quarter=n/4
-	u_l=1.2
-	u_r=0.4
-	do i=1,quarter
-		u(i)=u_l
-	enddo
-	do i=quarter+1,n
-		u(i)=u_r
-	enddo
-elseif (initial_data .EQ. 'r') then
-	l_per=.false.
-	quarter=n/4
-	u_l=1.2
-	u_r=0.4
-	do i=1,quarter
-		u(i)=u_l
-	enddo
-elseif (initial_data .EQ. 'f') then
-	l_per=.false.
-	quarter=n/4
-	half=n/2
+		l_per=.true.
+		quarter=n/4
+		half=n/2
 		do i=1,quarter
-		u(i)=0.25
-	enddo
-	do i-quarter+1,half+1
-		u(i)=0.25 - (x(i)-x(quarter+1))*0.25/(x(half+1)-x(quarter+1))
-	enddo
-	do i=half+2,n
-		u(i)=0
-	enddo
-elseif (initial_data .EQ. 'c') then
-	l_per=.true.
-	quarter=n/4
-	half=n/2
-	do i=1,quarter
-		u(i)=0
-	enddo
-	do i=quarter+1,half+1
-		u(i)=1
-	enddo
-	do i=half2,n
-		u(i)=0
-	enddo
-else
-	write(*,*) 'bad value for initial_data'
-	stop
-endif
+			u(i)=0
+		enddo
+		do i=n-quarter+1,n
+			u(i)=0
+		enddo
+		do i=quarter+1,half+1
+			u(i)=(x(i)-x(quarter+1)) / (x(half+1)-x(quarter+1))
+		enddo
+		do i=half+1,n-quarter
+			u(i)=1-(x(i)-x(half+1))/(x(n-quarter)-x(half+1))
+		enddo
+	elseif (initial_data .EQ. 's') then
+		l_per=.false.
+		quarter=n/4
+		u_l=1.2
+		u_r=0.4
+		do i=1,quarter
+			u(i)=u_l
+		enddo
+		do i=quarter+1,n
+			u(i)=u_r
+		enddo
+	elseif (initial_data .EQ. 'r') then
+		l_per=.false.
+		quarter=n/4
+		u_l=1.2
+		u_r=0.4
+		do i=1,quarter
+			u(i)=u_l
+		enddo
+	elseif (initial_data .EQ. 'f') then
+		l_per=.false.
+		quarter=n/4
+		half=n/2
+			do i=1,quarter
+			u(i)=0.25
+		enddo
+		do i=quarter+1,half+1
+			u(i)=0.25 - (x(i)-x(quarter+1))*0.25/(x(half+1)-x(quarter+1))
+		enddo
+		do i=half+2,n
+			u(i)=0
+		enddo
+	elseif (initial_data .EQ. 'c') then
+		l_per=.true.
+		quarter=n/4
+		half=n/2
+		do i=1,quarter
+			u(i)=0
+		enddo
+		do i=quarter+1,half+1
+			u(i)=1
+		enddo
+		do i=half+2,n
+			u(i)=0
+		enddo
+	else
+		write(*,*) 'bad value for initial_data'
+		stop
+	endif
 end subroutine init_data
 
 subroutine put_out ()
@@ -195,8 +195,8 @@ end subroutine put_out
 subroutine calculation ()
 	use globals
 	implicit none
-	do time-0,t_max,delta_t
-		if (first_time .EQ. .false.) then
+	do time=0,t_max,delta_t !time,t_max,delta_t must be integers but are defined as real - must investigate usage
+		if (first_time .EQV. .false.) then
 			if (l_per) then
 				u(1:margin)=u(n-margin-margin+1:n-margin)
 				u(n-margin+1:n)=u(margin+1:margin+margin)
@@ -213,7 +213,7 @@ subroutine calculation ()
 				endif
 			endif
 		endif
-		fist_time=.false.
+		first_time=.false.
 		
 		u_old=u
 		
@@ -247,7 +247,7 @@ subroutine lax_friedrich
 	use globals
 	implicit none
 	do i=2,n-1
-		u(i)=0.5*(u_old(i-1)+u_old(i+1)-o.5*courant)number*(f(u_old(i+1))-f(u_old(i-1)))
+		u(i)=0.5*(u_old(i-1) + u_old(i+1) - 0.5*courant_number*(f(u_old(i+1))-f(u_old(i-1))))
 	enddo
 end subroutine lax_friedrich
 
@@ -260,11 +260,11 @@ subroutine godunov
 		if (f_der(u_old(i)) .GE. 0 .AND. f_der(u_old(i+1)) .GE. 0) u_star=u_old(i)
 		if (f_der(u_old(i)) .LE. 0 .AND. f_der(u_old(i+1)) .LE. 0) u_star=u_old(i+1)
 		if (f_der(u_old(i)) .GE. 0 .AND. f_der(u_old(i+1)) .LE. 0 .AND. &
-			& (f(u_old(i+1)-f(u_old(i)))/(u_old(i+1)-u_old(i) .GT. 0) u_star=u_old(i)
+			& (f(u_old(i+1)-f(u_old(i)))/(u_old(i+1)-u_old(i))) .GT. 0) u_star=u_old(i)
 		if (f_der(u_old(i)) .GE. 0 .AND. f_der(u_old(i+1)) .LE. 0 .AND. &
-			& (f(u_old(i+1)-f(u_old(i)))/(u_old(i+1)-u_old(i) .LT. 0) u_star=u_old(i+1)	
+			& (f(u_old(i+1)-f(u_old(i)))/(u_old(i+1)-u_old(i))) .LT. 0) u_star=u_old(i+1)	
 		if (f_der(u_old(i)) .LT. 0 .AND. f_der(u_old(i+1)) .GT. 0) u_star=0
-		numerical_fluxI)=f(u_star)
+		numerical_flux(i)=f(u_star)
 	enddo
 	
 	do i=2,n-1
@@ -279,7 +279,7 @@ subroutine parabolic
 		f_minus=0.5*(f(u_old(i))+f(u_old(i-1)))
 		f_plus=0.5*(f(u_old(i))+f(u_old(i+1)))
 		u(i)=u_old(i)+courant_number*(D*(u_old(i+1)-2*u_old(i)+u_old(i-1))/delta_x - &
-			& (f_plus-f_minus)
+			& (f_plus-f_minus)) 
 !			& (f(u_old(i)-f(u_old(i-1))))
 	enddo
 end subroutine parabolic
@@ -301,7 +301,7 @@ subroutine high_resolution ()
 	!calculation numerical flux
 	do i=2,n-1
 		u1=u_old(i+1)-u_old(i)
-		u2=u_old(i)-u(old(i-1)
+		u2=u_old(i)-u_old(i-1)
 		if ( abs(u1) .LT. abs(u2) .AND. (u1*u2) .GT. 0) minmod=u1
 		if ( abs(u2) .LT. abs(u1) .AND. (u1*u2) .GT. 0) minmod=u2
 		if ( (u1*u2) .LE. 0) minmod=0
@@ -311,7 +311,7 @@ subroutine high_resolution ()
 		else
 			a_roof=0
 		endif
-		numerical_flux(i)=f(u_old(i)) + 0.5*a_roof*(1-courant_numer*a_roof)*delta_x*sigma
+		numerical_flux(i)=f(u_old(i)) + 0.5*a_roof*(1-courant_number*a_roof)*delta_x*sigma
 	enddo
 	
 	do i=3,n-2
