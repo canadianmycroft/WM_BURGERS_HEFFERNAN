@@ -37,7 +37,7 @@ program burgers_equation
 	
 	write(*,*) 'Numerical methods for BURGERS EQUATION'
 	write(*,*) 'Inviscid (i) or viscid (v) Burgers Equation'
-	read(*,*)
+	read(*,*) what_burgers_equation
 	
 	if (what_burgers_equation .EQ. 'v') then
 		what_method=7
