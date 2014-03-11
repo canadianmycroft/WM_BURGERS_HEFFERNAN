@@ -74,13 +74,13 @@ subroutine init ()
 	use globals
 	implicit none
 	
-	open(unit=input,file='input.a') !This does not seem to exist
+	open(unit=input,file='input.a') !This does not seem to exist, write the file and figure out what the quantities are, make it up and get some output
 	read(input,*) a
 	read(input,*) b
-	read(input,*) n
-	read(input,*) margin
-	read(input,*) courant_number
-	read(input,*) t_max
+	read(input,*) n !number of subdivisions
+	read(input,*) margin !figure this out based on usage
+	read(input,*) courant_number !CFL of 1 is marginal, typically choose less than 1 for stability, the smaller you make it, the more steps you have
+	read(input,*) t_max !arbitrary value, see examples in paper for where this shows up
 	if (what_method .EQ. 7) read(input,*) D
 	close(input)
 	
@@ -94,7 +94,7 @@ subroutine init ()
 	n_intv_i=1.0/n_intv
 	
 	do i=1,n
-		x(i)=(i-1)*(b-a)*n_intv_i
+		x(i)=(i-1)*(b-a)*n_intv_i !x(i) is the grid, check what it looks like. a,b are ends of the interval in a uniform grid
 	enddo
 	do i=1,n_intv
 		h(i)=x(i+1)-x(i)
@@ -196,7 +196,7 @@ end subroutine put_out
 subroutine calculation ()
 	use globals
 	implicit none
-	do time=0,t_max,delta_t !time,t_max,delta_t must be integers but are defined as real - must investigate usage
+	do time=0,t_max,delta_t !time,t_max,delta_t must be integers but are defined as real - should be fine, but gfortran compiler does not allow this to pass
 		if (first_time .EQV. .false.) then
 			if (l_per) then
 				u(1:margin)=u(n-margin-margin+1:n-margin)
