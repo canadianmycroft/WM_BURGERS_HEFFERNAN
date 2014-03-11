@@ -187,7 +187,7 @@ subroutine put_out ()
 	use globals
 	implicit none
 	
-	open(unit=output,file='output.xls',form='formatted',position='rewind',status='unknown')
+	open(unit=output,file='output.xls',form='formatted',position='rewind',status='unknown') !mathematica read error
 	do i=1,n
 		write(output,*) u(i)
 	enddo
