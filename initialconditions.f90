@@ -9,7 +9,7 @@ print *,'Enter an integer step size'
 read *, n
 
 do x=1,n
-	f_x=sin((2*3.14159265*x)/n)
+	f_x=cos((2*3.14159265*x)/n)
 	write(1,*) f_x
 end do
 end program initialconditions
