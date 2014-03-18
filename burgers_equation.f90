@@ -114,6 +114,7 @@ subroutine init_data ()
 	write(*,*) '	(r) rarefaction initial data'
 	write(*,*) '	(f) shock forming initial data'
 	write(*,*) '	(c) a complicated example'
+	write(*,*) '	(t) cosine'
 	read(*,*) initial_data
 	
 	if (initial_data .EQ. 'h') then
@@ -177,6 +178,11 @@ subroutine init_data ()
 		do i=half+2,n
 			u(i)=0
 		enddo
+	elseif (initial_data .EQ. 't') then
+		l_per=.false.
+		do i=1,n
+			u(i)=cos((2*3.14159265*i)/n)
+		end do
 	else
 		write(*,*) 'bad value for initial_data'
 		stop
