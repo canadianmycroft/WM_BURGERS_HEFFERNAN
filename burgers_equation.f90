@@ -32,6 +32,11 @@ end module globals
 program burgers_equation
 	!this program computes numerical solutions to the inviscid and viscid
 	!Burgers' equation using different numerical methods
+		
+	!This program was written by Matthew Heffernan at the College of William
+	!& Mary, based off code previously published. This is licensed
+	!under a Creative Commons Attribution-ShareAlike 4.0 International
+	!license. For questions, contact the author at mrheffernan@email.wm.edu
 	
 	use globals
 	
@@ -179,7 +184,7 @@ subroutine init_data ()
 			u(i)=0
 		enddo
 	elseif (initial_data .EQ. 't') then
-		l_per=.false.
+		l_per=.true.
 		do i=1,n
 			u(i)=cos((2*3.14159265*i)/n)
 		end do
