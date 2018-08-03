@@ -1,12 +1,4 @@
-WM_BURGERS_HEFFERNAN
+## A model of Burgers equation
 ====================
 
-Repository for M. Heffernan's Burger's Equation Modeling Project
-
-This project is being undertaken at The College of William & Mary in Williamsburg, VA, USA.
-It intends to compare Burger's Equation Simulations between 1D and 2D Lattice-Boltzmann Modeling Methods.
-
-Fortran90 is the dominant language used throughout and this project is compiled through use of the GNU Compiler Collection 
-	in conjunction with Windows PowerShell and the gfortran command.
-
-For further information, contact the author through git.
+This project took intended to compare simulations of Burger's equation between 1D and 2D Lattice-Boltzmann models using pre-existing Fortran90 code as part of an undergraduate physics project. This project is now dormant.
